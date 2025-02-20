@@ -16,12 +16,14 @@
             <UButton to="/dashboard" variant="ghost" color="white"
               >Dashboard</UButton
             >
-            <UButton to="/transactions" variant="ghost" color="white"
+            <UButton to="/dashboard/transactions" variant="ghost" color="white"
               >Transactions</UButton
             >
           </template>
 
-          <UButton to="/profile" variant="ghost" color="white">Profile</UButton>
+          <UButton to="/dashboard/profile" variant="ghost" color="white"
+            >Profile</UButton
+          >
           <UButton @click="authStore.logout" color="red" variant="soft"
             >Logout</UButton
           >

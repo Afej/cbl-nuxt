@@ -1,9 +1,13 @@
-import { type LoginDTO, type User } from '~/common/types'
+import {
+  type ChangePasswordDTO,
+  type LoginDTO,
+  type UpdateUserDTO,
+  type User,
+} from '~/common/types'
 
 interface AuthStoreState {
   user: User | null
   token: string | null
-  loading: boolean
 }
 
 const { authApi } = useApi()
@@ -12,7 +16,6 @@ export const useAuthStore = defineStore('auth', {
   state: (): AuthStoreState => ({
     user: null,
     token: null,
-    loading: false,
   }),
 
   getters: {
@@ -22,7 +25,6 @@ export const useAuthStore = defineStore('auth', {
 
   actions: {
     async login(payload: LoginDTO) {
-      this.loading = true
       try {
         const { data } = await authApi.login(payload)
 
@@ -41,14 +43,26 @@ export const useAuthStore = defineStore('auth', {
         return data.user
       } catch (error: any) {
         throw new Error(error.response?.data?.message || 'Login failed')
-      } finally {
-        this.loading = false
       }
     },
     async fetchUser() {
       try {
         const { data } = await authApi.getAuthUser()
         this.user = data
+      } catch (error) {
+        this.logout()
+      }
+    },
+    async updateProfile(payload: UpdateUserDTO) {
+      try {
+        await authApi.updateProfile(payload)
+      } catch (error) {
+        this.logout()
+      }
+    },
+    async updatePassword(payload: ChangePasswordDTO) {
+      try {
+        await authApi.changePassword(payload)
       } catch (error) {
         this.logout()
       }
