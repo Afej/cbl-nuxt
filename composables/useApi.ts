@@ -10,9 +10,13 @@
  */
 
 import { authApi } from '~/common/api/auth'
+import { usersApi } from '~/common/api/users'
+import { walletApi } from '~/common/api/wallet'
 
 export const useApi = () => {
   return {
-    auth: authApi,
+    authApi,
+    usersApi,
+    walletApi,
   }
 }

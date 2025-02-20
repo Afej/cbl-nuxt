@@ -1,4 +1,4 @@
-import type { LoginDTO, User } from '~/common/types'
+import { type LoginDTO, type User } from '~/common/types'
 
 interface AuthStoreState {
   user: User | null
@@ -6,7 +6,7 @@ interface AuthStoreState {
   loading: boolean
 }
 
-const { auth } = useApi()
+const { authApi } = useApi()
 
 export const useAuthStore = defineStore('auth', {
   state: (): AuthStoreState => ({
@@ -24,13 +24,21 @@ export const useAuthStore = defineStore('auth', {
     async login(payload: LoginDTO) {
       this.loading = true
       try {
-        const { data } = await auth.login(payload)
+        const { data } = await authApi.login(payload)
 
         this.token = data.token
         this.user = data.user
 
-        // return navigation path based on user role
-        return this.user.role === 'admin' ? '/admin' : '/dashboard'
+        const cookieOptions = {
+          maxAge: 60 * 60 * 24 * 1, // 1 day
+          secure: true,
+          httpOnly: true,
+        }
+
+        useCookie('token', cookieOptions).value = this.token
+        useCookie<User | null>('user', cookieOptions).value = this.user
+
+        return data.user
       } catch (error: any) {
         throw new Error(error.response?.data?.message || 'Login failed')
       } finally {
@@ -39,7 +47,7 @@ export const useAuthStore = defineStore('auth', {
     },
     async fetchUser() {
       try {
-        const { data } = await auth.getAuthUser()
+        const { data } = await authApi.getAuthUser()
         this.user = data
       } catch (error) {
         this.logout()
@@ -49,7 +57,13 @@ export const useAuthStore = defineStore('auth', {
       this.token = null
       this.user = null
 
-      // TODO: clear cookies
+      const cookieOptions = {
+        maxAge: 0,
+      }
+
+      useCookie('token', cookieOptions).value = null
+      useCookie<User | null>('user', cookieOptions).value = null
+
       navigateTo('/login')
     },
   },
