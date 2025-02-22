@@ -1,6 +1,7 @@
 <template>
   <UModal
     :model-value="show"
+    :prevent-close="loading"
     @update:model-value="$emit('update:show', $event)">
     <UCard>
       <template #header>
@@ -8,32 +9,43 @@
       </template>
       <p class="mb-4">{{ message }}</p>
       <div class="flex justify-end gap-2">
-        <UButton @click="$emit('update:show', false)" variant="ghost"
-          >Cancel</UButton
-        >
         <UButton
-          @click="
-            () => {
-              onConfirm()
-              $emit('update:show', false)
-            }
-          ">
-          Confirm
+          @click="$emit('update:show', false)"
+          variant="outline"
+          :disabled="loading">
+          Cancel
         </UButton>
+        <UButton @click="handleConfirm" :loading="loading"> Confirm </UButton>
       </div>
     </UCard>
   </UModal>
 </template>
 
 <script setup lang="ts">
-defineProps<{
+const loading = ref(false)
+
+const props = defineProps<{
   show: boolean
   title: string
   message: string
-  onConfirm: () => void
+  onConfirm: (() => Promise<void>) | (() => void)
 }>()
 
-defineEmits<{
+const emit = defineEmits<{
   'update:show': [value: boolean]
 }>()
+
+const handleConfirm = async () => {
+  loading.value = true
+  try {
+    const result = props.onConfirm()
+    if (result instanceof Promise) {
+      await result
+    }
+    loading.value = false
+    emit('update:show', false)
+  } catch (error) {
+    loading.value = false
+  }
+}
 </script>

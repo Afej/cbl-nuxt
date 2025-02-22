@@ -12,6 +12,7 @@
               >Admin Panel</UButton
             >
           </template>
+
           <template v-else>
             <UButton to="/dashboard" variant="ghost" color="white"
               >Dashboard</UButton
