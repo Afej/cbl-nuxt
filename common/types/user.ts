@@ -20,8 +20,15 @@ export interface User {
 }
 
 export type CreateUserDTO = Omit<User, '_id' | 'createdAt' | 'updatedAt'> & {
+  password: string
   accountStatus?: UserAccountStatus
   role?: UserRole
 }
 
 export type UpdateUserDTO = Partial<CreateUserDTO>
+
+export type UpdateProfileDTO = {
+  firstName?: string
+  lastName?: string
+  email?: string
+}

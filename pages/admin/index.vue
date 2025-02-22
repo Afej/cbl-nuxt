@@ -25,6 +25,11 @@
               :columns="userColumns"
               :rows="users"
               :loading="loadingUsers">
+              <template #role-data="{ row }">
+                <span class="capitalize">
+                  {{ row.role }}
+                </span>
+              </template>
               <template #status-data="{ row }">
                 <UBadge
                   :color="
@@ -32,7 +37,9 @@
                       ? 'green'
                       : 'red'
                   ">
-                  {{ row.accountStatus }}
+                  <span class="capitalize">
+                    {{ row.accountStatus }}
+                  </span>
                 </UBadge>
               </template>
               <template #actions-data="{ row }">
@@ -120,6 +127,10 @@
             <UInput v-model="newUser.email" type="email" required />
           </UFormGroup>
 
+          <UFormGroup label="Password">
+            <CustomPasswordInput v-model="newUser.password" required />
+          </UFormGroup>
+
           <UFormGroup label="Role">
             <USelect
               v-model="newUser.role"
@@ -138,6 +149,13 @@
         </form>
       </UCard>
     </UModal>
+
+    <!-- Confirmation Modal -->
+    <ConfirmationModal
+      v-model:show="showConfirmModal"
+      :title="confirmConfig.title"
+      :message="confirmConfig.message"
+      :on-confirm="confirmConfig.onConfirm" />
   </div>
 </template>
 
@@ -210,6 +228,7 @@ const newUser = ref<CreateUserDTO>({
   firstName: '',
   lastName: '',
   email: '',
+  password: '',
   role: UserRole.User,
   accountStatus: UserAccountStatus.Active,
 })
@@ -234,7 +253,10 @@ const fetchUsers = async (page = 1) => {
     users.value = response.data
     userMeta.value = response.meta
   } catch (error) {
-    toast.add({ title: 'Failed to load users', color: 'red' })
+    toast.add({
+      title: getErrorMessage(error, 'Failed to load users'),
+      color: 'red',
+    })
   } finally {
     loadingUsers.value = false
   }
@@ -250,7 +272,10 @@ const fetchTransactions = async (page = 1) => {
     transactions.value = response.data
     transactionMeta.value = response.meta
   } catch (error) {
-    toast.add({ title: 'Failed to load transactions', color: 'red' })
+    toast.add({
+      title: getErrorMessage(error, 'Failed to load transactions'),
+      color: 'red',
+    })
   } finally {
     loadingTransactions.value = false
   }
@@ -268,6 +293,7 @@ const handleTransactionPageChange = (page: number) => {
 
 const confirmDeleteUser = (user: User) => {
   const { _id, firstName, lastName } = user
+
   confirmConfig.value = {
     title: 'Delete User',
     message: `Are you sure you want to delete ${firstName} ${lastName}?`,
@@ -282,7 +308,10 @@ const deleteUser = async (id: string) => {
     await fetchUsers(userCurrentPage.value)
     toast.add({ title: 'User deleted successfully', color: 'green' })
   } catch (error) {
-    toast.add({ title: 'Failed to delete user', color: 'red' })
+    toast.add({
+      title: getErrorMessage(error, 'Failed to delete user'),
+      color: 'red',
+    })
   }
 }
 
@@ -304,7 +333,10 @@ const reverseTransaction = async (id: string) => {
     await fetchTransactions(transactionCurrentPage.value)
     toast.add({ title: 'Transaction reversed successfully', color: 'green' })
   } catch (error) {
-    toast.add({ title: 'Failed to reverse transaction', color: 'red' })
+    toast.add({
+      title: getErrorMessage(error, 'Failed to reverse transaction'),
+      color: 'red',
+    })
   }
 }
 
@@ -319,11 +351,15 @@ const handleAddUser = async () => {
       firstName: '',
       lastName: '',
       email: '',
+      password: '',
       role: UserRole.User,
       accountStatus: UserAccountStatus.Active,
     }
   } catch (error) {
-    toast.add({ title: 'Failed to create user', color: 'red' })
+    toast.add({
+      title: getErrorMessage(error, 'Failed to create user'),
+      color: 'red',
+    })
   } finally {
     addingUser.value = false
   }

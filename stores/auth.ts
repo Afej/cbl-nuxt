@@ -1,7 +1,7 @@
 import {
   type ChangePasswordDTO,
   type LoginDTO,
-  type UpdateUserDTO,
+  type UpdateProfileDTO,
   type User,
 } from '~/common/types'
 
@@ -33,16 +33,14 @@ export const useAuthStore = defineStore('auth', {
 
         const cookieOptions = {
           maxAge: 60 * 60 * 24 * 1, // 1 day
-          secure: true,
-          httpOnly: true,
         }
 
         useCookie('token', cookieOptions).value = this.token
         useCookie<User | null>('user', cookieOptions).value = this.user
 
         return data.user
-      } catch (error: any) {
-        throw new Error(error.response?.data?.message || 'Login failed')
+      } catch (error) {
+        throw error
       }
     },
     async fetchUser() {
@@ -50,33 +48,29 @@ export const useAuthStore = defineStore('auth', {
         const { data } = await authApi.getAuthUser()
         this.user = data
       } catch (error) {
-        this.logout()
+        throw error
       }
     },
-    async updateProfile(payload: UpdateUserDTO) {
+    async updateProfile(payload: UpdateProfileDTO) {
       try {
         await authApi.updateProfile(payload)
       } catch (error) {
-        this.logout()
+        throw error
       }
     },
     async updatePassword(payload: ChangePasswordDTO) {
       try {
         await authApi.changePassword(payload)
       } catch (error) {
-        this.logout()
+        throw error
       }
     },
     logout() {
       this.token = null
       this.user = null
 
-      const cookieOptions = {
-        maxAge: 0,
-      }
-
-      useCookie('token', cookieOptions).value = null
-      useCookie<User | null>('user', cookieOptions).value = null
+      useCookie('token').value = null
+      useCookie<User | null>('user').value = null
 
       navigateTo('/login')
     },

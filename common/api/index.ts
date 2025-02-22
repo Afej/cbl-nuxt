@@ -34,11 +34,11 @@ class Api {
   private setupInterceptors() {
     this.api.interceptors.request.use((config) => {
       // Add any common headers or configurations here specific to your API/Project
-      // const token = useCookie('token').value
+      const token = useCookie('token').value
 
-      // if (token) {
-      //   config.headers.Authorization = `Bearer ${token}`
-      // }
+      if (token) {
+        config.headers.Authorization = `Bearer ${token}`
+      }
       return config
     })
 

@@ -6,13 +6,13 @@
       </template>
 
       <form @submit.prevent="handleLogin">
-        <div class="space-y-4">
+        <div class="space-y-6">
           <UFormGroup label="Email" class="text-gray-300">
             <UInput v-model="email" type="email" required />
           </UFormGroup>
 
           <UFormGroup label="Password" class="text-gray-300">
-            <UInput v-model="password" type="password" required />
+            <CustomPasswordInput v-model="password" required />
           </UFormGroup>
 
           <UButton type="submit" block :loading="loading"> Login </UButton>
@@ -24,6 +24,7 @@
 
 <script setup lang="ts">
 import { UserRole } from '~/common/types'
+import CustomPasswordInput from '~/components/CustomPasswordInput.vue'
 
 definePageMeta({
   middleware: ['guest'],
@@ -53,11 +54,9 @@ async function handleLogin() {
       : navigateTo('/dashboard')
   } catch (error: any) {
     toast.add({
-      title: 'Login failed',
-      description: `${error.message}`,
+      title: getErrorMessage(error, 'Login failed'),
       color: 'red',
     })
-    console.error('Login failed:', error)
   } finally {
     loading.value = false
   }

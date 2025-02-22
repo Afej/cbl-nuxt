@@ -45,8 +45,3 @@ export interface TransactionDetails {
   description: string
   success: boolean
 }
-
-export type TransferResponse = {
-  message: string
-  data: Wallet
-}

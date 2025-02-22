@@ -2,7 +2,6 @@ import api from './index'
 import type {
   DepositDTO,
   TransferDTO,
-  TransferResponse,
   Wallet,
   WalletTransaction,
   WithdrawDTO,
@@ -22,7 +21,7 @@ export const walletApi = {
 
   // Transfer funds
   transfer: (data: TransferDTO) => {
-    return api.post<TransferResponse>('/wallet/transfer', {
+    return api.post<WalletTransaction>('/wallet/transfer', {
       data,
     })
   },
