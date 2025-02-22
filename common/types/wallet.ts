@@ -45,3 +45,5 @@ export interface TransactionDetails {
   description: string
   success: boolean
 }
+
+export type TransactionModalType = 'deposit' | 'withdraw' | 'transfer'

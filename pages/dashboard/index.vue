@@ -7,7 +7,7 @@
       <UCard class="bg-gray-800">
         <div class="text-center">
           <h3 class="text-gray-400 mb-2">Current Balance</h3>
-          <p class="text-3xl font-bold">${{ balance.toFixed(2) }}</p>
+          <p class="text-3xl font-bold">${{ formattedNumber(balance) }}</p>
         </div>
       </UCard>
 
@@ -37,12 +37,14 @@
             v-for="tx in recentTransactions"
             :key="tx._id"
             class="flex justify-between items-center">
-            <span>{{ tx.type }}</span>
+            <span class="capitalize">{{ tx.type }}</span>
             <span
               :class="
                 tx.details.amount > 0 ? 'text-green-500' : 'text-red-500'
               ">
-              {{ tx.details.amount > 0 ? '+' : '' }}${{ tx.details.amount }}
+              {{ tx.details.amount > 0 ? '+' : '' }}${{
+                formattedNumber(tx.details.amount)
+              }}
             </span>
           </div>
         </div>
@@ -51,88 +53,61 @@
     </div>
 
     <!-- Modals -->
-    <UModal :model-value="activeModal === 'deposit'" @close="closeModal">
-      <UCard class="bg-gray-800">
-        <template #header>
-          <h3 class="text-xl font-bold">Deposit Money</h3>
-        </template>
-        <form @submit.prevent="handleDeposit">
-          <UFormGroup label="Amount" class="text-gray-300">
-            <UInput
-              v-model="depositAmount"
-              type="number"
-              min="0"
-              step="0.01"
-              required />
-          </UFormGroup>
-          <div class="flex justify-end gap-2 mt-4">
-            <UButton @click="closeModal" variant="ghost" color="white"
-              >Cancel</UButton
-            >
-            <UButton type="submit" color="green">Deposit</UButton>
-          </div>
-        </form>
-      </UCard>
-    </UModal>
+    <TransactionModal
+      type="deposit"
+      :active-modal="activeModal"
+      :is-loading="isTransactionLoading"
+      @close="closeModal"
+      @submit="handleDeposit">
+      <UFormGroup label="Amount" class="text-gray-300">
+        <UInput
+          v-model="depositAmount"
+          type="number"
+          min="0"
+          step="0.01"
+          required />
+      </UFormGroup>
+    </TransactionModal>
 
-    <UModal :model-value="activeModal === 'withdraw'" @close="closeModal">
-      <UCard class="bg-gray-800">
-        <template #header>
-          <h3 class="text-xl font-bold">Withdraw Money</h3>
-        </template>
-        <form @submit.prevent="handleWithdraw">
-          <UFormGroup label="Amount" class="text-gray-300">
-            <UInput
-              v-model="withdrawAmount"
-              type="number"
-              min="0"
-              step="0.01"
-              required />
-          </UFormGroup>
-          <div class="flex justify-end gap-2 mt-4">
-            <UButton @click="closeModal" variant="ghost" color="white"
-              >Cancel</UButton
-            >
-            <UButton type="submit" color="orange">Withdraw</UButton>
-          </div>
-        </form>
-      </UCard>
-    </UModal>
+    <TransactionModal
+      type="withdraw"
+      :active-modal="activeModal"
+      :is-loading="isTransactionLoading"
+      @close="closeModal"
+      @submit="handleWithdrawal">
+      <UFormGroup label="Amount" class="text-gray-300">
+        <UInput
+          v-model="withdrawAmount"
+          type="number"
+          min="0"
+          step="0.01"
+          required />
+      </UFormGroup>
+    </TransactionModal>
 
-    <UModal :model-value="activeModal === 'transfer'" @close="closeModal">
-      <UCard class="bg-gray-800">
-        <template #header>
-          <h3 class="text-xl font-bold">Transfer Money</h3>
-        </template>
-        <form @submit.prevent="handleTransfer">
-          <UFormGroup label="Recipient Email" class="text-gray-300">
-            <UInput v-model="transferForm.email" type="email" required />
-          </UFormGroup>
-          <UFormGroup label="Amount" class="text-gray-300 mt-4">
-            <UInput
-              v-model="transferForm.amount"
-              type="number"
-              min="0"
-              step="0.01"
-              required />
-          </UFormGroup>
-
-          <div class="flex justify-end gap-2 mt-4">
-            <UButton @click="closeModal" variant="ghost" color="white"
-              >Cancel</UButton
-            >
-            <UButton type="submit" color="white">Transfer</UButton>
-          </div>
-        </form>
-      </UCard>
-    </UModal>
+    <TransactionModal
+      type="transfer"
+      :active-modal="activeModal"
+      :is-loading="isTransactionLoading"
+      @close="closeModal"
+      @submit="handleTransfer">
+      <UFormGroup label="Recipient Email" class="text-gray-300">
+        <UInput v-model="transferForm.email" type="email" required />
+      </UFormGroup>
+      <UFormGroup label="Amount" class="text-gray-300 mt-4">
+        <UInput
+          v-model="transferForm.amount"
+          type="number"
+          min="0"
+          step="0.01"
+          required />
+      </UFormGroup>
+    </TransactionModal>
   </div>
 </template>
 
 <script setup lang="ts">
-import type { WalletTransaction } from '~/common/types'
-
-type ModalType = 'deposit' | 'withdraw' | 'transfer' | null
+import type { TransactionModalType, WalletTransaction } from '~/common/types'
 
 const {
   getUserWallet,
@@ -152,9 +127,9 @@ const transferForm = reactive({
   email: '',
 })
 const recentTransactions = ref<WalletTransaction[]>([])
-const activeModal = ref<ModalType>(null)
+const activeModal = ref<TransactionModalType | null>(null)
 
-const openModal = (type: ModalType) => {
+const openModal = (type: TransactionModalType) => {
   activeModal.value = type
 }
 
@@ -166,6 +141,8 @@ const closeModal = () => {
   transferForm.email = ''
 }
 
+const isTransactionLoading = ref(false)
+
 const fetchWalletData = async () => {
   try {
     const [walletData, transactionsData] = await Promise.all([
@@ -174,35 +151,44 @@ const fetchWalletData = async () => {
     ])
     balance.value = walletData.balance
     recentTransactions.value = transactionsData.data
-  } catch {
-    toast.add({ title: 'Failed to load wallet data', color: 'red' })
+  } catch (error) {
+    toast.add({
+      title: getErrorMessage(error, 'Failed to load wallet data'),
+      color: 'red',
+    })
   }
 }
 
 const handleDeposit = async () => {
+  isTransactionLoading.value = true
   try {
     await depositFunds({ amount: Number(depositAmount.value) })
     await fetchWalletData()
     toast.add({ title: 'Deposit successful', color: 'green' })
     closeModal()
-  } catch {
-    toast.add({ title: 'Deposit failed', color: 'red' })
+  } catch (error) {
+    toast.add({ title: getErrorMessage(error, 'Deposit failed'), color: 'red' })
+  } finally {
+    isTransactionLoading.value = false
   }
 }
 
-const handleWithdraw = async () => {
+const handleWithdrawal = async () => {
   if (Number(withdrawAmount.value) > balance.value) {
     toast.add({ title: 'Insufficient funds', color: 'red' })
     return
   }
 
+  isTransactionLoading.value = true
   try {
     await withdrawFunds({ amount: Number(withdrawAmount.value) })
     await fetchWalletData()
     toast.add({ title: 'Withdrawal successful', color: 'green' })
     closeModal()
-  } catch {
-    toast.add({ title: 'Withdrawal failed', color: 'red' })
+  } catch (error) {
+    toast.add({ title: getErrorMessage('Withdrawal failed'), color: 'red' })
+  } finally {
+    isTransactionLoading.value = false
   }
 }
 
@@ -211,6 +197,8 @@ const handleTransfer = async () => {
     toast.add({ title: 'Insufficient funds', color: 'red' })
     return
   }
+
+  isTransactionLoading.value = true
 
   try {
     await transferFunds({
@@ -223,11 +211,14 @@ const handleTransfer = async () => {
       description: `Sent to ${transferForm.email}`,
       color: 'green',
     })
-    transferForm.amount = ''
-    transferForm.email = ''
     closeModal()
-  } catch {
-    toast.add({ title: 'Transfer failed', color: 'red' })
+  } catch (error) {
+    toast.add({
+      title: getErrorMessage(error, 'Transfer failed'),
+      color: 'red',
+    })
+  } finally {
+    isTransactionLoading.value = false
   }
 }
 
