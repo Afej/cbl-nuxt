@@ -1,4 +1,4 @@
-import type { User } from '~/common/types'
+import type { User, Wallet } from '~/common/types'
 import api from '../common/api'
 
 export default defineNuxtPlugin(() => {
@@ -10,10 +10,15 @@ export default defineNuxtPlugin(() => {
 
   const token = useCookie('token').value
   const user = useCookie<User | null>('user').value
+  const userWallet = useCookie<Wallet | null>('wallet').value
 
   if (token && user) {
     api.setToken(token)
     authStore.token = token
     authStore.user = user
+  }
+
+  if (userWallet) {
+    authStore.userWallet = userWallet
   }
 })

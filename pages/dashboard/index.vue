@@ -31,18 +31,24 @@
 
       <!-- Recent Activity -->
       <UCard class="bg-gray-800">
-        <h3 class="font-semibold mb-4">Recent Activity</h3>
+        <div class="flex items-center justify-between mb-4">
+          <h3 class="font-semibold">Recent Activity</h3>
+          <NuxtLink
+            v-if="recentTransactions.length >= 5"
+            to="/dashboard/transactions"
+            class="hover:underline text-sm">
+            See More
+          </NuxtLink>
+        </div>
+
         <div v-if="recentTransactions.length" class="space-y-2">
           <div
             v-for="tx in recentTransactions"
             :key="tx._id"
             class="flex justify-between items-center">
             <span class="capitalize">{{ tx.type }}</span>
-            <span
-              :class="
-                tx.details.amount > 0 ? 'text-green-500' : 'text-red-500'
-              ">
-              {{ tx.details.amount > 0 ? '+' : '' }}${{
+            <span :class="getAmountClass(tx.type)">
+              {{ getAmountPrefix(tx.type) }}${{
                 formattedNumber(tx.details.amount)
               }}
             </span>
@@ -91,7 +97,7 @@
       :is-loading="isTransactionLoading"
       @close="closeModal"
       @submit="handleTransfer">
-      <UFormGroup label="Recipient Email" class="text-gray-300">
+      <UFormGroup label="Receiver's Email" class="text-gray-300">
         <UInput v-model="transferForm.email" type="email" required />
       </UFormGroup>
       <UFormGroup label="Amount" class="text-gray-300 mt-4">
@@ -118,8 +124,11 @@ const {
 } = useWallet()
 const toast = useToast()
 
+const authStore = useAuthStore()
+const { userWallet } = storeToRefs(authStore)
+
 // State
-const balance = ref(0)
+const balance = ref(userWallet.value?.balance || 0)
 const depositAmount = ref('')
 const withdrawAmount = ref('')
 const transferForm = reactive({
@@ -203,7 +212,7 @@ const handleTransfer = async () => {
   try {
     await transferFunds({
       amount: Number(transferForm.amount),
-      recipientEmail: transferForm.email,
+      receiverEmail: transferForm.email,
     })
     await fetchWalletData()
     toast.add({

@@ -58,17 +58,13 @@
 
         <form @submit.prevent="changePassword" class="space-y-4">
           <UFormGroup label="Current Password">
-            <UInput
+            <CustomPasswordInput
               v-model="passwordForm.currentPassword"
-              type="password"
               required />
           </UFormGroup>
 
           <UFormGroup label="New Password">
-            <UInput
-              v-model="passwordForm.newPassword"
-              type="password"
-              required />
+            <CustomPasswordInput v-model="passwordForm.newPassword" required />
           </UFormGroup>
 
           <div class="flex justify-end gap-4">

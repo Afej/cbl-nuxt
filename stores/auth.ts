@@ -1,21 +1,25 @@
 import {
+  UserRole,
   type ChangePasswordDTO,
   type LoginDTO,
   type UpdateProfileDTO,
   type User,
+  type Wallet,
 } from '~/common/types'
 
 interface AuthStoreState {
   user: User | null
   token: string | null
+  userWallet: Wallet | null
 }
 
-const { authApi } = useApi()
+const { authApi, walletApi } = useApi()
 
 export const useAuthStore = defineStore('auth', {
   state: (): AuthStoreState => ({
     user: null,
     token: null,
+    userWallet: null,
   }),
 
   getters: {
@@ -37,6 +41,15 @@ export const useAuthStore = defineStore('auth', {
 
         useCookie('token', cookieOptions).value = this.token
         useCookie<User | null>('user', cookieOptions).value = this.user
+
+        // get user wallet
+        if (this.user.role === UserRole.User) {
+          const { data: wallet } = await walletApi.getWallet()
+          this.userWallet = wallet
+
+          useCookie<Wallet | null>('wallet', cookieOptions).value =
+            this.userWallet
+        }
 
         return data.user
       } catch (error) {
@@ -66,11 +79,11 @@ export const useAuthStore = defineStore('auth', {
       }
     },
     logout() {
-      this.token = null
-      this.user = null
+      this.$reset()
 
       useCookie('token').value = null
       useCookie<User | null>('user').value = null
+      useCookie<Wallet | null>('wallet').value = null
 
       navigateTo('/login')
     },

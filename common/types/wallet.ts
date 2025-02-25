@@ -9,7 +9,7 @@ export type WithdrawDTO = {
 }
 
 export type TransferDTO = {
-  recipientEmail: string
+  receiverEmail: string
   amount: number
 }
 

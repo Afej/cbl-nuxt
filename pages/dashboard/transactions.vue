@@ -3,14 +3,27 @@
     <h1 class="text-2xl font-bold mb-8">Transaction History</h1>
 
     <UCard>
-      <UTable :columns="columns" :rows="transactions" :loading="loading">
-        <template #date-data="{ row }">
-          {{ new Date(row.date).toLocaleDateString() }}
+      <UTable
+        :columns="columns"
+        :rows="transformedTransactions"
+        :loading="loading">
+        <template #createdAt-data="{ row }">
+          {{ new Date(row.createdAt).toLocaleString() }}
+        </template>
+        <template #type-data="{ row }">
+          <span class="capitalize">{{ row.type }}</span>
         </template>
         <template #amount-data="{ row }">
-          <span :class="row.amount > 0 ? 'text-green-600' : 'text-red-600'">
-            {{ row.amount > 0 ? '+' : '' }}${{ row.amount }}
+          <span :class="getAmountClass(row.type)">
+            {{ getAmountPrefix(row.type) }}${{
+              formattedNumber(row.details.amount)
+            }}
           </span>
+        </template>
+        <template #status-data="{ row }">
+          <UBadge :color="row.details.success ? 'green' : 'red'">
+            {{ row.details.success ? 'Success' : 'Failed' }}
+          </UBadge>
         </template>
       </UTable>
 
@@ -45,11 +58,18 @@ const meta = ref<PageMeta>({
 })
 
 const columns = [
-  { key: 'date', label: 'Date' },
+  { key: 'createdAt', label: 'Date' },
   { key: 'type', label: 'Type' },
-  { key: 'description', label: 'Description' },
   { key: 'amount', label: 'Amount' },
+  { key: 'status', label: 'Status' },
 ]
+
+const transformedTransactions = computed(() => {
+  return transactions.value.map((transaction) => ({
+    ...transaction,
+    amount: transaction.details.amount,
+  }))
+})
 
 const getTransactions = async (page = 1) => {
   loading.value = true
