@@ -4,6 +4,10 @@ export const getAmountClass = (amount: number) => {
   return amount >= 0 ? 'text-green-600' : 'text-red-600'
 }
 
+export const getTransactionAmount = (amount: number) => {
+  return formattedNumber(Math.abs(amount))
+}
+
 export const getTypeColor = (type: TransactionType) => {
   switch (type) {
     case TransactionType.DEPOSIT:

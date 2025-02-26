@@ -1,4 +1,5 @@
 import type { PaginationParams } from './global'
+import type { Wallet, WalletTransaction } from './wallet'
 
 export enum Role {
   ADMIN = 'admin',
@@ -19,6 +20,8 @@ export interface User {
   accountStatus: AccountStatus
   createdAt: string
   updatedAt: string
+  transactions?: WalletTransaction[]
+  wallet?: Wallet
 }
 
 export type CreateUserDTO = Omit<User, '_id' | 'createdAt' | 'updatedAt'> & {

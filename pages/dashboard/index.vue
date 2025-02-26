@@ -8,6 +8,16 @@
         <div class="text-center">
           <h3 class="text-gray-400 mb-2">Current Balance</h3>
           <p class="text-3xl font-bold">${{ formattedNumber(balance) }}</p>
+          <div class="mt-4">
+            Account Status:
+            <UBadge
+              :color="
+                user?.accountStatus === AccountStatus.ACTIVE ? 'green' : 'red'
+              "
+              class="capitalize">
+              {{ user?.accountStatus }}
+            </UBadge>
+          </div>
         </div>
       </UCard>
 
@@ -51,7 +61,7 @@
               </UBadge>
             </div>
             <span :class="getAmountClass(tx.details.amount)">
-              ${{ formattedNumber(tx.details.amount) }}
+              ${{ getTransactionAmount(tx.details.amount) }}
             </span>
           </div>
         </div>
@@ -114,19 +124,18 @@
 </template>
 
 <script setup lang="ts">
-import type { TransactionModalType, WalletTransaction } from '~/common/types'
+import {
+  AccountStatus,
+  type TransactionModalType,
+  type WalletTransaction,
+} from '~/common/types'
 
-const {
-  getUserWallet,
-  fetchTransactions,
-  depositFunds,
-  transferFunds,
-  withdrawFunds,
-} = useWallet()
+const { fetchTransactions, depositFunds, transferFunds, withdrawFunds } =
+  useWallet()
 const toast = useToast()
 
 const authStore = useAuthStore()
-const { userWallet } = storeToRefs(authStore)
+const { user, userWallet } = storeToRefs(authStore)
 
 // State
 const balance = computed(() => userWallet.value?.balance || 0)
@@ -155,10 +164,9 @@ const isTransactionLoading = ref(false)
 
 const fetchWalletData = async () => {
   try {
-    const [transactionsData] = await Promise.all([
-      authStore.initializeWallet(),
-      fetchTransactions({ limit: 5 }),
-    ])
+    const transactionsData = await fetchTransactions({ limit: 5 })
+
+    authStore.initializeWallet()
     recentTransactions.value = transactionsData.data
   } catch (error) {
     toast.add({

@@ -43,7 +43,7 @@
       </template>
       <template #amount-data="{ row }">
         <span :class="getAmountClass(row.details.amount)">
-          ${{ formattedNumber(row.details.amount) }}
+          ${{ getTransactionAmount(row.details.amount) }}
         </span>
       </template>
       <template #description-data="{ row }">
