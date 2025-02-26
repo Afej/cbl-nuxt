@@ -1,75 +1,61 @@
-# Nuxt Minimal Starter
+# CBL Nuxt Application
 
-Look at the [Nuxt documentation](https://nuxt.com/docs/getting-started/introduction) to learn more.
+A simple modern banking application built by Joshua Afekuro featuring Nuxt UI, Pinia state management, and VueUse composables.
+
+## Features
+
+Implements the core functionalities of sample [Backend API](https://github.com/Afej/cbl-nest)
+
+- 🎨 [Nuxt UI](https://ui.nuxt.com/) - Beautiful and responsive UI components
+- 📦 [Pinia](https://pinia.vuejs.org/) - Intuitive state management
+- 🛠 [VueUse](https://vueuse.org/) - Collection of Vue Composition Utilities
 
 ## Setup
 
-Make sure to install dependencies:
+Install dependencies using your preferred package manager:
 
 ```bash
-# npm
-npm install
-
-# pnpm
-pnpm install
-
-# yarn
 yarn install
-
-# bun
-bun install
 ```
 
-## Development Server
+## Development
 
-Start the development server on `http://localhost:3000`:
+Start the development server at `http://localhost:3000`:
 
 ```bash
-# npm
-npm run dev
-
-# pnpm
-pnpm dev
-
-# yarn
 yarn dev
-
-# bun
-bun run dev
 ```
 
 ## Production
 
-Build the application for production:
+Build the application:
 
 ```bash
-# npm
-npm run build
-
-# pnpm
-pnpm build
-
-# yarn
 yarn build
-
-# bun
-bun run build
 ```
 
-Locally preview production build:
+Preview the production build:
 
 ```bash
-# npm
-npm run preview
-
-# pnpm
-pnpm preview
-
-# yarn
 yarn preview
-
-# bun
-bun run preview
 ```
 
-Check out the [deployment documentation](https://nuxt.com/docs/getting-started/deployment) for more information.
+## Environment Setup
+
+Create a `.env` file in the root directory:
+
+```env
+NUXT_PUBLIC_API_BASE_URL=https://cbl-nest.onrender.com
+```
+
+## License
+
+This project is licensed under the MIT License.
+
+## Documentation
+
+- [API Documentation](https://cbl-nest.onrender.com/api)
+- [Nuxt 3 Documentation](https://nuxt.com/docs)
+- [Nuxt UI Documentation](https://ui.nuxt.com/)
+- [Pinia Documentation](https://pinia.vuejs.org/)
+- [VueUse Documentation](https://vueuse.org/)
