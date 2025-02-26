@@ -1,6 +1,6 @@
 import type {
   DepositDTO,
-  PaginationParams,
+  GetTransactionsParams,
   TransferDTO,
   WithdrawDTO,
 } from '~/common/types'
@@ -17,7 +17,7 @@ export const useWallet = () => {
     }
   }
 
-  const fetchTransactions = async (params: PaginationParams = {}) => {
+  const fetchTransactions = async (params: GetTransactionsParams = {}) => {
     try {
       const { data } = await walletApi.getUserTransactions(params)
       return data

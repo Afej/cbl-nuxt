@@ -113,8 +113,11 @@ const passwordForm = reactive<ChangePasswordDTO>({
 const fetchProfile = async () => {
   try {
     await authApi.getAuthUser()
-  } catch {
-    toast.add({ title: 'Failed to load profile', color: 'red' })
+  } catch (error) {
+    toast.add({
+      title: getErrorMessage(error, 'Failed to load profile'),
+      color: 'red',
+    })
   }
 }
 
@@ -128,8 +131,11 @@ const updateProfile = async () => {
     }
     await authApi.updateProfile(payload)
     toast.add({ title: 'Profile updated successfully', color: 'green' })
-  } catch {
-    toast.add({ title: 'Failed to update profile', color: 'red' })
+  } catch (error) {
+    toast.add({
+      title: getErrorMessage(error, 'Failed to update profile'),
+      color: 'red',
+    })
   } finally {
     loading.value = false
   }
@@ -143,8 +149,11 @@ const changePassword = async () => {
     isChangePasswordOpen.value = false
     passwordForm.currentPassword = ''
     passwordForm.newPassword = ''
-  } catch {
-    toast.add({ title: 'Failed to change password', color: 'red' })
+  } catch (error) {
+    toast.add({
+      title: getErrorMessage(error, 'Failed to change password'),
+      color: 'red',
+    })
   } finally {
     passwordLoading.value = false
   }

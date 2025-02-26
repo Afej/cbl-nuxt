@@ -1,6 +1,7 @@
 import type {
   CreateUserDTO,
-  PaginationParams,
+  GetTransactionsParams,
+  GetUsersParams,
   UpdateUserDTO,
 } from '~/common/types'
 
@@ -8,7 +9,7 @@ export const useAdmin = () => {
   const { walletApi, usersApi } = useApi()
 
   // WALLET RELATED
-  const getAllTransactions = async (params: PaginationParams = {}) => {
+  const getAllTransactions = async (params: GetTransactionsParams = {}) => {
     try {
       const { data } = await walletApi.getAllTransactions(params)
       return data
@@ -36,7 +37,7 @@ export const useAdmin = () => {
   }
 
   // USERS RELATED
-  const getUsers = async (params: PaginationParams = {}) => {
+  const getUsers = async (params: GetUsersParams = {}) => {
     try {
       const { data } = await usersApi.getAllUsers(params)
       return data

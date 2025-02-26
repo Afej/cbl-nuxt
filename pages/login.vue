@@ -23,7 +23,7 @@
 </template>
 
 <script setup lang="ts">
-import { UserRole } from '~/common/types'
+import { Role } from '~/common/types'
 import CustomPasswordInput from '~/components/CustomPasswordInput.vue'
 
 definePageMeta({
@@ -49,9 +49,7 @@ async function handleLogin() {
 
     toast.add({ title: 'Logged in successfully', color: 'green' })
 
-    user.role === UserRole.Admin
-      ? navigateTo('/admin')
-      : navigateTo('/dashboard')
+    user.role === Role.ADMIN ? navigateTo('/admin') : navigateTo('/dashboard')
   } catch (error: any) {
     toast.add({
       title: getErrorMessage(error, 'Login failed'),

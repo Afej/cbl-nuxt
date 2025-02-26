@@ -1,11 +1,13 @@
-export enum UserRole {
-  Admin = 'admin',
-  User = 'user',
+import type { PaginationParams } from './global'
+
+export enum Role {
+  ADMIN = 'admin',
+  USER = 'user',
 }
 
-export enum UserAccountStatus {
-  Active = 'active',
-  Disabled = 'disabled',
+export enum AccountStatus {
+  ACTIVE = 'active',
+  DISABLED = 'disabled',
 }
 
 export interface User {
@@ -13,16 +15,16 @@ export interface User {
   firstName: string
   lastName: string
   email: string
-  role: UserRole
-  accountStatus: UserAccountStatus
+  role: Role
+  accountStatus: AccountStatus
   createdAt: string
   updatedAt: string
 }
 
 export type CreateUserDTO = Omit<User, '_id' | 'createdAt' | 'updatedAt'> & {
   password: string
-  accountStatus?: UserAccountStatus
-  role?: UserRole
+  accountStatus?: AccountStatus
+  role?: Role
 }
 
 export type UpdateUserDTO = Partial<CreateUserDTO>
@@ -31,4 +33,10 @@ export type UpdateProfileDTO = {
   firstName?: string
   lastName?: string
   email?: string
+}
+
+export type GetUsersParams = PaginationParams & {
+  search?: string
+  role?: Role
+  status?: AccountStatus
 }

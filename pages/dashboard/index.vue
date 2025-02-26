@@ -34,23 +34,24 @@
         <div class="flex items-center justify-between mb-4">
           <h3 class="font-semibold">Recent Activity</h3>
           <NuxtLink
-            v-if="recentTransactions.length >= 5"
             to="/dashboard/transactions"
             class="hover:underline text-sm">
             See More
           </NuxtLink>
         </div>
 
-        <div v-if="recentTransactions.length" class="space-y-2">
+        <div v-if="recentTransactions.length" class="space-y-3">
           <div
             v-for="tx in recentTransactions"
             :key="tx._id"
             class="flex justify-between items-center">
-            <span class="capitalize">{{ tx.type }}</span>
-            <span :class="getAmountClass(tx.type)">
-              {{ getAmountPrefix(tx.type) }}${{
-                formattedNumber(tx.details.amount)
-              }}
+            <div class="flex items-center gap-2">
+              <UBadge :color="getTypeColor(tx.type)" class="capitalize">
+                {{ tx.type }}
+              </UBadge>
+            </div>
+            <span :class="getAmountClass(tx.details.amount)">
+              ${{ formattedNumber(tx.details.amount) }}
             </span>
           </div>
         </div>
@@ -67,7 +68,7 @@
       @submit="handleDeposit">
       <UFormGroup label="Amount" class="text-gray-300">
         <UInput
-          v-model="depositAmount"
+          v-model.trim="depositAmount"
           type="number"
           min="0"
           step="0.01"
@@ -83,7 +84,7 @@
       @submit="handleWithdrawal">
       <UFormGroup label="Amount" class="text-gray-300">
         <UInput
-          v-model="withdrawAmount"
+          v-model.trim="withdrawAmount"
           type="number"
           min="0"
           step="0.01"
@@ -98,11 +99,11 @@
       @close="closeModal"
       @submit="handleTransfer">
       <UFormGroup label="Receiver's Email" class="text-gray-300">
-        <UInput v-model="transferForm.email" type="email" required />
+        <UInput v-model.trim="transferForm.email" type="email" required />
       </UFormGroup>
       <UFormGroup label="Amount" class="text-gray-300 mt-4">
         <UInput
-          v-model="transferForm.amount"
+          v-model.trim="transferForm.amount"
           type="number"
           min="0"
           step="0.01"

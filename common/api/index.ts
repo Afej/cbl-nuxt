@@ -5,6 +5,7 @@ import axios, {
   type AxiosResponse,
   type ResponseType,
 } from 'axios'
+import { useAuthStore } from '@/stores/auth'
 
 export interface Request {
   headers?: Record<string, string>
@@ -46,6 +47,9 @@ class Api {
       (response) => response,
       (error) => {
         if (error.response?.status === 401) {
+          // Handle 401 Unauthorized error here
+          const authStore = useAuthStore()
+          authStore.logout()
         }
         return Promise.reject(error)
       }

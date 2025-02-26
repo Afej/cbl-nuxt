@@ -1,5 +1,5 @@
 import {
-  UserRole,
+  Role,
   type ChangePasswordDTO,
   type LoginDTO,
   type UpdateProfileDTO,
@@ -43,7 +43,7 @@ export const useAuthStore = defineStore('auth', {
         useCookie<User | null>('user', cookieOptions).value = this.user
 
         // get user wallet
-        if (this.user.role === UserRole.User) {
+        if (this.user.role === Role.USER) {
           const { data: wallet } = await walletApi.getWallet()
           this.userWallet = wallet
 

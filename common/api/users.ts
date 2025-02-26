@@ -1,13 +1,18 @@
 import api from './index'
-import type { PaginationParams, PaginationResponse } from '../types/global'
-import type { CreateUserDTO, UpdateUserDTO, User } from '../types'
+import type { PaginationResponse } from '../types/global'
+import type {
+  CreateUserDTO,
+  GetUsersParams,
+  UpdateUserDTO,
+  User,
+} from '../types'
 
 export const usersApi = {
   getUser: (userId: string) => {
     return api.get<User>(`/users/${userId}`)
   },
 
-  getAllUsers: (params: PaginationParams) => {
+  getAllUsers: (params: GetUsersParams) => {
     return api.get<PaginationResponse<User[]>>('/users', {
       params,
     })

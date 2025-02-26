@@ -11,18 +11,21 @@
           {{ new Date(row.createdAt).toLocaleString() }}
         </template>
         <template #type-data="{ row }">
-          <span class="capitalize">{{ row.type }}</span>
+          <UBadge :color="getTypeColor(row.type)" class="capitalize">
+            {{ row.type }}
+          </UBadge>
         </template>
         <template #amount-data="{ row }">
-          <span :class="getAmountClass(row.type)">
-            {{ getAmountPrefix(row.type) }}${{
-              formattedNumber(row.details.amount)
-            }}
+          <span :class="getAmountClass(row.details.amount)">
+            ${{ formattedNumber(row.details.amount) }}
           </span>
         </template>
+        <template #description-data="{ row }">
+          {{ row.details.description || 'nil' }}
+        </template>
         <template #status-data="{ row }">
-          <UBadge :color="row.details.success ? 'green' : 'red'">
-            {{ row.details.success ? 'Success' : 'Failed' }}
+          <UBadge :color="getStatusColor(row.status)">
+            <span class="capitalize">{{ row.status }}</span>
           </UBadge>
         </template>
       </UTable>
@@ -61,6 +64,7 @@ const columns = [
   { key: 'createdAt', label: 'Date' },
   { key: 'type', label: 'Type' },
   { key: 'amount', label: 'Amount' },
+  { key: 'description', label: 'Description' },
   { key: 'status', label: 'Status' },
 ]
 
@@ -77,8 +81,11 @@ const getTransactions = async (page = 1) => {
     const response = await fetchTransactions({ page, limit: 10 })
     transactions.value = response.data
     meta.value = response.meta
-  } catch {
-    toast.add({ title: 'Failed to load transactions', color: 'red' })
+  } catch (error) {
+    toast.add({
+      title: getErrorMessage(error, 'Failed to load transactions'),
+      color: 'red',
+    })
   } finally {
     loading.value = false
   }

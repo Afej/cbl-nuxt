@@ -1,3 +1,4 @@
+import type { PaginationParams } from './global'
 import type { User } from './user'
 
 export type DepositDTO = {
@@ -22,10 +23,16 @@ export interface Wallet {
 }
 
 export enum TransactionType {
-  Deposit = 'deposit',
-  Withdrawal = 'withdrawal',
-  Transfer = 'transfer',
-  Reversal = 'reversal',
+  DEPOSIT = 'deposit',
+  WITHDRAWAL = 'withdrawal',
+  TRANSFER = 'transfer',
+  REVERSAL = 'reversal',
+}
+
+export enum TransactionStatus {
+  COMPLETED = 'completed',
+  REVERSED = 'reversed',
+  FAILED = 'failed',
 }
 
 export interface WalletTransaction {
@@ -33,6 +40,7 @@ export interface WalletTransaction {
   userId: string | User // when populated with user details
   walletId: string | Wallet // when populated with wallet details
   type: TransactionType
+  status: TransactionStatus
   details: TransactionDetails
   createdAt: string
   updatedAt: string
@@ -40,10 +48,19 @@ export interface WalletTransaction {
 
 export interface TransactionDetails {
   _id: string
-  madeBy: string
+  madeBy?: string
+  from?: string
+  to?: string
   amount: number
   description: string
   success: boolean
+  originalTransactionId?: string
 }
 
 export type TransactionModalType = 'deposit' | 'withdraw' | 'transfer'
+
+export type GetTransactionsParams = PaginationParams & {
+  search?: string
+  status?: string
+  type?: TransactionType
+}

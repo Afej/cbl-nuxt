@@ -1,12 +1,13 @@
 import api from './index'
 import type {
   DepositDTO,
+  GetTransactionsParams,
   TransferDTO,
   Wallet,
   WalletTransaction,
   WithdrawDTO,
 } from '../types/wallet'
-import type { PaginationParams, PaginationResponse } from '../types/global'
+import type { PaginationResponse } from '../types/global'
 
 export const walletApi = {
   // Deposit funds
@@ -32,7 +33,7 @@ export const walletApi = {
   },
 
   // Get user wallet transaction history
-  getUserTransactions: (params: PaginationParams) => {
+  getUserTransactions: (params: GetTransactionsParams) => {
     return api.get<PaginationResponse<WalletTransaction[]>>(
       '/wallet/transactions',
       { params }
@@ -46,7 +47,7 @@ export const walletApi = {
   },
 
   // Get all wallets transaction history
-  getAllTransactions: (params: PaginationParams) => {
+  getAllTransactions: (params: GetTransactionsParams) => {
     return api.get<PaginationResponse<WalletTransaction[]>>(
       '/wallet/transactions/all',
       { params }
