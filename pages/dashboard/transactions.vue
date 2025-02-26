@@ -3,6 +3,18 @@
     <h1 class="text-2xl font-bold mb-8">Transaction History</h1>
 
     <UCard>
+      <div class="flex flex-col md:flex-row gap-4 mb-6">
+        <USelect
+          v-model="selectedType"
+          :options="transactionTypeOptions"
+          placeholder="Filter by type" />
+
+        <USelect
+          v-model="selectedStatus"
+          :options="transactionStatusOptions"
+          placeholder="Filter by status" />
+      </div>
+
       <UTable
         :columns="columns"
         :rows="transformedTransactions"
@@ -44,9 +56,34 @@
 <script setup lang="ts">
 import type { WalletTransaction } from '~/common/types'
 import type { PageMeta } from '~/common/types/global'
+import { TransactionType, TransactionStatus } from '~/common/types'
+import {
+  getAmountClass,
+  getTypeColor,
+  getStatusColor,
+} from '~/utils/transactions'
 
 const toast = useToast()
 const { fetchTransactions } = useWallet()
+
+const selectedType = ref<TransactionType | ''>('')
+const selectedStatus = ref<TransactionStatus | ''>('')
+
+const transactionTypeOptions = [
+  { label: 'All Types', value: '' },
+  ...Object.values(TransactionType).map((type) => ({
+    label: type.charAt(0).toUpperCase() + type.slice(1).toLowerCase(),
+    value: type,
+  })),
+]
+
+const transactionStatusOptions = [
+  { label: 'All Statuses', value: '' },
+  ...Object.values(TransactionStatus).map((status) => ({
+    label: status.charAt(0).toUpperCase() + status.slice(1).toLowerCase(),
+    value: status,
+  })),
+]
 
 const transactions = ref<WalletTransaction[]>([])
 const loading = ref(false)
@@ -78,7 +115,20 @@ const transformedTransactions = computed(() => {
 const getTransactions = async (page = 1) => {
   loading.value = true
   try {
-    const response = await fetchTransactions({ page, limit: 10 })
+    const params: any = {
+      page,
+      limit: 10,
+    }
+
+    if (selectedType.value) {
+      params.type = selectedType.value
+    }
+
+    if (selectedStatus.value) {
+      params.status = selectedStatus.value
+    }
+
+    const response = await fetchTransactions(params)
     transactions.value = response.data
     meta.value = response.meta
   } catch (error) {
@@ -95,6 +145,11 @@ const handlePageChange = (page: number) => {
   currentPage.value = page
   getTransactions(page)
 }
+
+watch([selectedType, selectedStatus], () => {
+  currentPage.value = 1
+  getTransactions(1)
+})
 
 onMounted(() => getTransactions(1))
 </script>

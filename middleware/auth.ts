@@ -1,10 +1,7 @@
-export default defineNuxtRouteMiddleware((to) => {
-  const token = useCookie('token').value
+export default defineNuxtRouteMiddleware(() => {
+  const authStore = useAuthStore()
 
-  // Public routes that don't require authentication
-  const publicRoutes = ['/', '/login']
-
-  if (!token && !publicRoutes.includes(to.path)) {
+  if (!authStore.isAuthenticated) {
     return navigateTo('/login')
   }
 })

@@ -22,9 +22,12 @@
             >
           </template>
 
-          <UButton to="/dashboard/profile" variant="ghost" color="white"
-            >Profile</UButton
-          >
+          <UButton
+            :to="isAdmin ? '/admin/profile' : '/dashboard/profile'"
+            variant="ghost"
+            color="white">
+            Profile
+          </UButton>
           <UButton @click="authStore.logout" color="red" variant="soft"
             >Logout</UButton
           >

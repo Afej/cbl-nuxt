@@ -12,13 +12,16 @@ export default defineNuxtPlugin(() => {
   const user = useCookie<User | null>('user').value
   const userWallet = useCookie<Wallet | null>('wallet').value
 
-  if (token && user) {
+  if (token) {
     api.setToken(token)
     authStore.token = token
-    authStore.user = user
-  }
 
-  if (userWallet) {
-    authStore.userWallet = userWallet
+    if (user) {
+      authStore.user = user
+    }
+
+    if (userWallet) {
+      authStore.userWallet = userWallet
+    }
   }
 })

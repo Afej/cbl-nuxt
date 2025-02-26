@@ -129,7 +129,7 @@ const authStore = useAuthStore()
 const { userWallet } = storeToRefs(authStore)
 
 // State
-const balance = ref(userWallet.value?.balance || 0)
+const balance = computed(() => userWallet.value?.balance || 0)
 const depositAmount = ref('')
 const withdrawAmount = ref('')
 const transferForm = reactive({
@@ -155,11 +155,10 @@ const isTransactionLoading = ref(false)
 
 const fetchWalletData = async () => {
   try {
-    const [walletData, transactionsData] = await Promise.all([
-      getUserWallet(),
+    const [transactionsData] = await Promise.all([
+      authStore.initializeWallet(),
       fetchTransactions({ limit: 5 }),
     ])
-    balance.value = walletData.balance
     recentTransactions.value = transactionsData.data
   } catch (error) {
     toast.add({

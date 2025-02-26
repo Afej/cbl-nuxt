@@ -1,9 +1,11 @@
-import { Role, type User } from '~/common/types'
+export default defineNuxtRouteMiddleware(() => {
+  const authStore = useAuthStore()
 
-export default defineNuxtRouteMiddleware((to) => {
-  const user = useCookie<User | null>('user').value
+  if (!authStore.isAuthenticated) {
+    return navigateTo('/login')
+  }
 
-  if (user?.role !== Role.ADMIN) {
+  if (!authStore.isAdmin) {
     return navigateTo('/dashboard')
   }
 })

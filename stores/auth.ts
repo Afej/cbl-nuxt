@@ -1,3 +1,4 @@
+import api from '~/common/api'
 import {
   Role,
   type ChangePasswordDTO,
@@ -7,13 +8,14 @@ import {
   type Wallet,
 } from '~/common/types'
 
+import { authApi } from '~/common/api/auth'
+import { walletApi } from '~/common/api/wallet'
+
 interface AuthStoreState {
   user: User | null
   token: string | null
   userWallet: Wallet | null
 }
-
-const { authApi, walletApi } = useApi()
 
 export const useAuthStore = defineStore('auth', {
   state: (): AuthStoreState => ({
@@ -28,30 +30,46 @@ export const useAuthStore = defineStore('auth', {
   },
 
   actions: {
-    async login(payload: LoginDTO) {
+    async initializeWallet() {
       try {
-        const { data } = await authApi.login(payload)
-
-        this.token = data.token
-        this.user = data.user
+        const { data: wallet } = await walletApi.getWallet()
+        this.userWallet = wallet
 
         const cookieOptions = {
           maxAge: 60 * 60 * 24 * 1, // 1 day
         }
 
-        useCookie('token', cookieOptions).value = this.token
-        useCookie<User | null>('user', cookieOptions).value = this.user
+        useCookie<Wallet | null>('wallet', cookieOptions).value =
+          this.userWallet
+      } catch (error) {
+        console.error('Failed to fetch wallet:', error)
+        throw error
+      }
+    },
+    async login(payload: LoginDTO) {
+      try {
+        const {
+          data: { token, user },
+        } = await authApi.login(payload)
+
+        this.token = token
+        this.user = user
+
+        api.setToken(token)
+
+        const cookieOptions = {
+          maxAge: 60 * 60 * 24 * 1, // 1 day
+        }
+
+        useCookie('token', cookieOptions).value = token
+        useCookie<User | null>('user', cookieOptions).value = user
 
         // get user wallet
         if (this.user.role === Role.USER) {
-          const { data: wallet } = await walletApi.getWallet()
-          this.userWallet = wallet
-
-          useCookie<Wallet | null>('wallet', cookieOptions).value =
-            this.userWallet
+          await this.initializeWallet()
         }
 
-        return data.user
+        return user
       } catch (error) {
         throw error
       }

@@ -9,13 +9,10 @@ definePageMeta({
   middleware: ['auth'],
 })
 
-import { Role } from '~/common/types'
-
 const authStore = useAuthStore()
-const { user } = storeToRefs(authStore)
 
 onMounted(() => {
-  if (user.value?.role === Role.ADMIN) {
+  if (authStore.isAdmin) {
     navigateTo('/admin')
   }
 })
