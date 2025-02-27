@@ -2,22 +2,16 @@
   <div class="space-y-4">
     <div
       class="flex flex-col md:flex-row justify-between md:items-center gap-4">
-      <div class="flex justify-between">
+      <div>
         <UButton
           @click="showAddUserModal = true"
           color="primary"
           icon="i-heroicons-user-plus">
           Add User
         </UButton>
-        <UInput
-          class="md:hidden"
-          v-model.trim="searchQuery"
-          placeholder="Search users..."
-          icon="i-heroicons-magnifying-glass"
-          @input="handleSearch" />
       </div>
 
-      <div class="flex gap-4 items-center justify-between">
+      <div class="flex gap-4 items-center">
         <USelect
           v-model="selectedRole"
           :options="roleOptions"
@@ -35,6 +29,13 @@
           icon="i-heroicons-magnifying-glass"
           @input="handleSearch" />
       </div>
+
+      <UInput
+        class="md:hidden"
+        v-model.trim="searchQuery"
+        placeholder="Search users..."
+        icon="i-heroicons-magnifying-glass"
+        @input="handleSearch" />
     </div>
 
     <UTable :columns="columns" :rows="users" :loading="loading">

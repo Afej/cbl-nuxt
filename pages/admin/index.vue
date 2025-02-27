@@ -34,12 +34,12 @@ const transactionsTableRef = ref()
 const tabItems = [
   {
     key: 'users',
-    label: 'User Management',
+    label: 'Users',
     description: 'Manage system users and their permissions',
   },
   {
     key: 'transactions',
-    label: 'Transaction Management',
+    label: 'Transactions',
     description: 'View and manage all system transactions',
   },
 ]
