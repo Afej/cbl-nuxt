@@ -2,16 +2,22 @@
   <div class="space-y-4">
     <div
       class="flex flex-col md:flex-row justify-between md:items-center gap-4">
-      <div>
+      <div class="flex justify-between">
         <UButton
           @click="showAddUserModal = true"
           color="primary"
           icon="i-heroicons-user-plus">
           Add User
         </UButton>
+        <UInput
+          class="md:hidden"
+          v-model.trim="searchQuery"
+          placeholder="Search users..."
+          icon="i-heroicons-magnifying-glass"
+          @input="handleSearch" />
       </div>
 
-      <div class="flex gap-4 items-center">
+      <div class="flex gap-4 items-center justify-between">
         <USelect
           v-model="selectedRole"
           :options="roleOptions"
@@ -23,6 +29,7 @@
           placeholder="Filter by status" />
 
         <UInput
+          class="hidden md:block"
           v-model.trim="searchQuery"
           placeholder="Search users..."
           icon="i-heroicons-magnifying-glass"
@@ -73,13 +80,13 @@
     </div>
 
     <!-- Add User Modal -->
-    <UModal v-model="showAddUserModal">
+    <UModal v-model="showAddUserModal" :fullscreen="isMobile">
       <UCard>
         <template #header>
           <h3 class="text-xl font-bold">Add New User</h3>
         </template>
         <form @submit.prevent="handleAddUser" class="space-y-4">
-          <div class="grid grid-cols-2 gap-4">
+          <div class="grid md:grid-cols-2 gap-4">
             <UFormGroup label="First Name">
               <UInput v-model.trim="newUser.firstName" required />
             </UFormGroup>
@@ -135,6 +142,9 @@ import { Role, AccountStatus } from '~/common/types'
 const toast = useToast()
 
 const showConfirmModal = ref(false)
+
+const { width } = useWindowSize()
+const isMobile = computed(() => width.value < 640)
 
 const confirmConfig = ref({
   title: '',

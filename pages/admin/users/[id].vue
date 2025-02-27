@@ -6,6 +6,7 @@
       <div class="flex items-center gap-2 justify-between">
         <UButton
           v-if="user"
+          class="hidden md:block"
           icon="i-heroicons-pencil-square"
           color="primary"
           variant="soft"
@@ -30,6 +31,16 @@
 
       <div v-else-if="user">
         <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+          <div class="md:hidden">
+            <UButton
+              icon="i-heroicons-pencil-square"
+              color="primary"
+              variant="soft"
+              @click="openEditForm">
+              Edit Profile
+            </UButton>
+          </div>
+
           <div>
             <h3 class="font-semibold mb-4">Personal Information</h3>
             <div class="space-y-3">
@@ -164,7 +175,7 @@
           <div class="flex justify-end gap-3 mt-6">
             <UButton
               color="gray"
-              variant="soft"
+              variant="ghost"
               @click="isEditing = false"
               :disabled="updating">
               Cancel

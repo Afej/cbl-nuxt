@@ -2,7 +2,8 @@
   <UModal
     :model-value="show"
     :prevent-close="loading"
-    @update:model-value="$emit('update:show', $event)">
+    @update:model-value="$emit('update:show', $event)"
+    :fullscreen="isMobile">
     <UCard>
       <template #header>
         <h3 class="text-xl font-bold">{{ title }}</h3>
@@ -34,6 +35,9 @@ const props = defineProps<{
 const emit = defineEmits<{
   'update:show': [value: boolean]
 }>()
+
+const { width } = useWindowSize()
+const isMobile = computed(() => width.value < 640)
 
 const handleConfirm = async () => {
   loading.value = true

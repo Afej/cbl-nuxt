@@ -8,13 +8,21 @@
 
         <div v-if="isAuthenticated" class="flex gap-4">
           <template v-if="isAdmin">
-            <UButton to="/admin" variant="ghost" color="white"
+            <UButton
+              to="/admin"
+              variant="ghost"
+              color="white"
+              class="hidden md:block"
               >Admin Panel</UButton
             >
           </template>
 
           <template v-else>
-            <UButton to="/dashboard" variant="ghost" color="white"
+            <UButton
+              to="/dashboard"
+              variant="ghost"
+              color="white"
+              class="hidden md:block"
               >Dashboard</UButton
             >
             <UButton to="/dashboard/transactions" variant="ghost" color="white"

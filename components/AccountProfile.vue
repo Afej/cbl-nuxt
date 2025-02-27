@@ -4,7 +4,7 @@
       <!-- Profile Card -->
       <UCard>
         <form @submit.prevent="updateProfile" class="space-y-4">
-          <div class="grid grid-cols-2 gap-4">
+          <div class="grid md:grid-cols-2 gap-4">
             <UFormGroup label="First Name">
               <UInput v-model.trim="profile.firstName" required />
             </UFormGroup>
@@ -14,7 +14,7 @@
             </UFormGroup>
           </div>
 
-          <div class="grid grid-cols-2 gap-4">
+          <div class="grid md:grid-cols-2 gap-4">
             <UFormGroup label="Email">
               <UInput v-model.trim="profile.email" type="email" required />
             </UFormGroup>
@@ -48,7 +48,7 @@
     </div>
 
     <!-- Change Password Modal -->
-    <UModal v-model="isChangePasswordOpen">
+    <UModal v-model="isChangePasswordOpen" :fullscreen="isMobile">
       <UCard>
         <template #header>
           <h3 class="text-lg font-semibold">Change Password</h3>
@@ -89,6 +89,9 @@ import type { ChangePasswordDTO } from '~/common/types'
 
 const { authApi } = useApi()
 const toast = useToast()
+
+const { width } = useWindowSize()
+const isMobile = computed(() => width.value < 640)
 
 const loading = ref(false)
 const passwordLoading = ref(false)

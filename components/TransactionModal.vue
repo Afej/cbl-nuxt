@@ -2,7 +2,8 @@
   <UModal
     :model-value="activeModal === type"
     @close="handleClose"
-    :prevent-close="isLoading">
+    :prevent-close="isLoading"
+    :fullscreen="isMobile">
     <UCard class="bg-gray-800">
       <template #header>
         <h3 class="text-xl font-bold">{{ modalConfig.title }}</h3>
@@ -82,4 +83,7 @@ const handleClose = () => {
 const onSubmit = () => {
   emit('submit')
 }
+
+const { width } = useWindowSize()
+const isMobile = computed(() => width.value < 640)
 </script>

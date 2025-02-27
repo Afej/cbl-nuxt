@@ -203,7 +203,10 @@ const handleWithdrawal = async () => {
     toast.add({ title: 'Withdrawal successful', color: 'green' })
     closeModal()
   } catch (error) {
-    toast.add({ title: getErrorMessage('Withdrawal failed'), color: 'red' })
+    toast.add({
+      title: getErrorMessage(error, 'Withdrawal failed'),
+      color: 'red',
+    })
   } finally {
     isTransactionLoading.value = false
   }

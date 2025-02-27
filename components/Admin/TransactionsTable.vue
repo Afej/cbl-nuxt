@@ -14,11 +14,19 @@
           placeholder="Filter by status" />
 
         <UInput
+          class="hidden md:block"
           v-model.trim="searchQuery"
           placeholder="Search transactions..."
           icon="i-heroicons-magnifying-glass"
           @input="handleSearch" />
       </div>
+
+      <UInput
+        class="md:hidden"
+        v-model.trim="searchQuery"
+        placeholder="Search transactions..."
+        icon="i-heroicons-magnifying-glass"
+        @input="handleSearch" />
     </div>
 
     <UTable :columns="columns" :rows="transactions" :loading="loading">
