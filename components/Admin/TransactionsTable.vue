@@ -19,6 +19,15 @@
           placeholder="Search transactions..."
           icon="i-heroicons-magnifying-glass"
           @input="handleSearch" />
+
+        <UButton
+          icon="i-heroicons-arrow-path"
+          size="sm"
+          color="gray"
+          variant="outline"
+          class="ml-2"
+          @click="resetFilters"
+          :title="'Reset filters'" />
       </div>
 
       <UInput
@@ -229,12 +238,21 @@ const reverseTransaction = async (id: string) => {
   }
 }
 
+const resetFilters = () => {
+  selectedType.value = ''
+  selectedStatus.value = ''
+  searchQuery.value = ''
+  currentPage.value = 1
+  fetchTransactions(1)
+}
+
 onMounted(() => {
   fetchTransactions()
 })
 
 defineExpose({
   fetchTransactions,
+  resetFilters,
 })
 </script>
 

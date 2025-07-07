@@ -13,6 +13,14 @@
           v-model="selectedStatus"
           :options="transactionStatusOptions"
           placeholder="Filter by status" />
+
+        <UButton
+          color="gray"
+          variant="outline"
+          class="self-start"
+          @click="resetFilters">
+          Reset
+        </UButton>
       </div>
 
       <UTable
@@ -144,6 +152,13 @@ const getTransactions = async (page = 1) => {
 const handlePageChange = (page: number) => {
   currentPage.value = page
   getTransactions(page)
+}
+
+const resetFilters = () => {
+  selectedType.value = ''
+  selectedStatus.value = ''
+  currentPage.value = 1
+  getTransactions(1)
 }
 
 watch([selectedType, selectedStatus], () => {

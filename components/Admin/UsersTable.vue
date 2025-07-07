@@ -28,6 +28,15 @@
           placeholder="Search users..."
           icon="i-heroicons-magnifying-glass"
           @input="handleSearch" />
+
+        <UButton
+          icon="i-heroicons-arrow-path"
+          size="sm"
+          color="gray"
+          variant="outline"
+          class="ml-2"
+          @click="resetFilters"
+          :title="'Reset filters'" />
       </div>
 
       <UInput
@@ -308,12 +317,21 @@ const handleAddUser = async () => {
   }
 }
 
+const resetFilters = () => {
+  selectedRole.value = ''
+  selectedStatus.value = ''
+  searchQuery.value = ''
+  currentPage.value = 1
+  fetchUsers(1)
+}
+
 onMounted(() => {
   fetchUsers()
 })
 
 defineExpose({
   fetchUsers,
+  resetFilters,
 })
 </script>
 
