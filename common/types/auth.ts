@@ -5,12 +5,19 @@ export type LoginDTO = {
   password: string
 }
 
+export type RegisterDTO = {
+  email: string
+  password: string
+  firstName: string
+  lastName: string
+}
+
 export type ChangePasswordDTO = {
   currentPassword: string
   newPassword: string
 }
 
-export type LoginResponse = {
+export type AuthResponse = {
   token: string
   user: User
 }

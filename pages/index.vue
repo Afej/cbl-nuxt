@@ -7,6 +7,7 @@
       <p class="text-gray-400 mb-8">Secure and easy way to manage your money</p>
       <div class="flex gap-4 justify-center">
         <UButton to="/login" size="lg" color="primary">Login</UButton>
+        <UButton to="/register" size="lg" color="white">Register</UButton>
       </div>
     </div>
   </div>

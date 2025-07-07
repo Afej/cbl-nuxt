@@ -6,6 +6,7 @@ import {
   type UpdateProfileDTO,
   type User,
   type Wallet,
+  type RegisterDTO,
 } from '~/common/types'
 
 import { authApi } from '~/common/api/auth'
@@ -92,6 +93,34 @@ export const useAuthStore = defineStore('auth', {
     async updatePassword(payload: ChangePasswordDTO) {
       try {
         await authApi.changePassword(payload)
+      } catch (error) {
+        throw error
+      }
+    },
+    async register(payload: RegisterDTO) {
+      try {
+        const {
+          data: { token, user },
+        } = await authApi.register(payload)
+
+        this.token = token
+        this.user = user
+
+        api.setToken(token)
+
+        const cookieOptions = {
+          maxAge: 60 * 60 * 24 * 1, // 1 day
+        }
+
+        useCookie('token', cookieOptions).value = token
+        useCookie<User | null>('user', cookieOptions).value = user
+
+        // get user wallet
+        if (this.user.role === Role.USER) {
+          await this.initializeWallet()
+        }
+
+        return user
       } catch (error) {
         throw error
       }
